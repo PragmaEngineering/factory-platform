@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#172725">
+<meta name="description" content="Pragma is a control plane for configured agent workflows: explicit routing, bounded collaboration, human decisions, and observable execution.">
+<title>Pragma — A control plane for agent work</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%275%27 fill=%27%23172725%27/%3E%3Cpath d=%27M7 25V7h4v18zm7 0V12h4v13zm7 0v-8h4v8z%27 fill=%27%23bfe8ce%27/%3E%3C/svg%3E">
+<style>
+:root{--paper:#f4f3ee;--white:#fffefa;--ink:#172725;--muted:#5b6b65;--line:#d6dbd3;--green:#1a6850;--mint:#bfe8ce;--orange:#d5532c;--dark:#132623;--darkline:#35504a;--mono:ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace;--sans:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:90px}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{font:inherit}
+button,a{-webkit-tap-highlight-color:transparent}
+button{cursor:pointer}
+a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var(--orange);outline-offset:5px}
+::selection{background:#c1ddce}
+p{line-height:1.65}
+h1,h2,h3,p{margin:0}
+button{color:inherit}
+.wrap{max-width:1360px;padding:0 48px;margin:auto}
+.mono,.eyebrow{font-family:var(--mono)}
+.eyebrow{font-size:11px;letter-spacing:.11em;text-transform:uppercase;font-weight:600;display:flex;gap:12px;align-items:center}
+.eyebrow:before{content:"";width:7px;height:7px;background:var(--orange)}
+.muted{color:var(--muted)}
+
+header{border-bottom:1px solid var(--line);background:rgba(244,243,238,.96);position:sticky;top:0;z-index:20;backdrop-filter:blur(16px)}
+.nav{height:76px;display:flex;align-items:center;gap:40px}
+.brand{display:inline-flex;align-items:center;gap:11px;font-size:23px;font-weight:730;letter-spacing:-.8px}
+.mark{width:25px;height:27px;display:grid;grid-template-columns:repeat(3,5px);gap:4px;align-items:end;transform:skewY(-12deg)}
+.mark i{background:var(--ink);height:100%}
+.mark i:nth-child(2){height:70%}
+.mark i:nth-child(3){height:42%}
+.navlinks{margin-left:auto;display:flex;gap:29px;font-size:13px}
+.navlinks a{color:var(--muted)}
+.navlinks a:hover{color:var(--orange)}
+.navend{border-left:1px solid var(--line);padding-left:26px;font:10px var(--mono);line-height:1.7;color:var(--muted)}
+.navend span{display:block;color:var(--green)}
+
+.hero{padding-top:68px}
+.hero-top{display:grid;grid-template-columns:1.35fr .65fr;gap:64px;align-items:end;margin:27px 0 36px}
+h1{font-size:clamp(46px,5.4vw,76px);line-height:1.035;letter-spacing:-3.6px;font-weight:570;max-width:850px}
+h1 em{font-style:normal;color:var(--green)}
+.hero-copy p{font-size:16px;color:var(--muted);max-width:390px}
+.textlink{display:inline-flex;gap:22px;align-items:center;margin-top:25px;font-size:13px;font-weight:650;border-bottom:1px solid var(--ink);padding-bottom:9px}
+.textlink:hover{color:var(--orange);border-color:var(--orange)}
+.hero-meta{display:flex;gap:26px;padding:17px 0;border-top:1px solid var(--line);font:10px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.045em}
+.hero-meta span:before{content:"+";color:var(--green);margin-right:9px}
+
+.system{background:var(--dark);color:#e3eee5;border:1px solid #263e36;box-shadow:0 14px 40px #142a2410;position:relative}
+.system-top{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--darkline);padding:18px 25px;font:10px var(--mono);letter-spacing:.05em;color:#afc4b8}
+.system-top .dot{display:inline-block;width:6px;height:6px;background:var(--mint);margin-right:9px}
+.system-grid{display:grid;grid-template-columns:1fr 300px;min-height:410px}
+.map{padding:36px 32px;background-image:radial-gradient(#48625770 .7px,transparent .7px);background-size:16px 16px}
+.flow-row{display:flex;align-items:stretch;gap:0}
+.flow-node{border:1px solid #5b776c;background:#1d332c;padding:17px 19px;flex:1;text-align:left;transition:background .18s,border-color .18s;min-width:0}
+.flow-node:hover,.flow-node[aria-pressed="true"]{border-color:var(--mint);background:#2b493b}
+.flow-node .node-type{font:9px var(--mono);letter-spacing:.09em;color:#b4c9bc;text-transform:uppercase;display:block;margin-bottom:13px}
+.flow-node strong{font-size:16px;display:block;font-weight:550;letter-spacing:-.25px}
+.flow-node small{font:10px var(--mono);color:#a9c2b3;display:block;margin-top:10px}
+.connector{width:38px;display:flex;align-items:center;justify-content:center;color:#b9c9be;font:19px var(--mono)}
+.flow-bridge{height:38px;margin-right:90px;border-right:1px solid #779c86;position:relative}
+.flow-bridge:after{content:"↓";position:absolute;right:-5px;bottom:-4px;color:#b6d6bf;font:16px var(--mono)}
+.runtime-zone{border:1px dashed #547464;padding:15px;position:relative}
+.zone-label{font:9px var(--mono);color:#b7c9bf;display:flex;justify-content:space-between;margin:0 0 14px;text-transform:uppercase;letter-spacing:.08em}
+.runtime-zone .flow-node{background:#182b25}
+.runtime-zone .flow-node[aria-pressed="true"],.runtime-zone .flow-node:hover{background:#2b493b}
+.return-path{font:10px var(--mono);color:#adcdb8;display:flex;align-items:center;gap:10px;margin:14px 0 0}
+.return-path:before{content:"↳";font-size:18px}
+.return-path:after{content:"";height:1px;background:#4d705c;flex:1}
+.map-caption{font:10px var(--mono);color:#9ab2a3;margin-top:22px}
+.inspector{border-left:1px solid var(--darkline);padding:28px 25px;display:flex;flex-direction:column}
+.inspector .label{font:9px var(--mono);color:#9db7a7;letter-spacing:.1em;margin-bottom:24px}
+.inspector h3{font-size:21px;font-weight:500;letter-spacing:-.5px}
+.inspector p{font-size:12px;color:#b9cec0;margin-top:14px;min-height:100px}
+.inspect-tags{margin-top:22px;display:flex;flex-wrap:wrap;gap:7px}
+.inspect-tags span{font:9px var(--mono);padding:7px 8px;border:1px solid #4e6b5c;color:#d1e2d5}
+.inspector-bottom{margin-top:auto;padding-top:22px;font:9px var(--mono);color:#99b5a4;line-height:1.8}
+.system-foot{border-top:1px solid var(--darkline);padding:14px 25px;display:flex;gap:24px;font:10px var(--mono);color:#b5cbbc}
+.system-foot span:first-child{color:var(--mint)}
+
+.intro{display:grid;grid-template-columns:1fr 2fr;gap:50px;padding-top:55px;padding-bottom:62px;border-bottom:1px solid var(--line)}
+.intro h2{font-size:23px;letter-spacing:-.6px;font-weight:550;max-width:270px;line-height:1.3}
+.intro p{font-size:16px;color:var(--muted);max-width:780px}
+.intro strong{font-weight:600;color:var(--ink)}
+section{padding:85px 0;border-bottom:1px solid var(--line)}
+.section-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:40px;margin:22px 0 36px}
+h2{font-size:clamp(30px,3.1vw,43px);letter-spacing:-1.6px;line-height:1.12;font-weight:530}
+.section-heading p{max-width:420px;font-size:14px;color:var(--muted)}
+.number{color:var(--orange);font:11px var(--mono)}
+
+.layers{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);background:var(--white)}
+.layer{padding:28px;border-right:1px solid var(--line)}
+.layer:last-child{border:0}
+.layer-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:34px;font:10px var(--mono);color:var(--muted)}
+.layer h3{font-size:23px;font-weight:540;letter-spacing:-.7px;margin-bottom:14px}
+.layer p{font-size:13px;color:var(--muted);min-height:87px}
+.layer ul{list-style:none;padding:20px 0 0;margin:20px 0 0;border-top:1px solid var(--line);font:11px/2.4 var(--mono)}
+.layer li:before{content:"↳";color:var(--green);margin-right:10px}
+.interface{display:flex;align-items:center;justify-content:space-between;gap:20px;border:1px solid var(--line);border-top:0;padding:16px 25px;font:10px var(--mono);color:var(--muted)}
+.interface code{color:var(--green)}
+
+.config-layout>div,.protocol>div,.boundaries>div{min-width:0}
+.config-layout{display:grid;grid-template-columns:.78fr 1.22fr;gap:56px}
+.config-copy h2{margin:22px 0}
+.config-copy p{font-size:14px;color:var(--muted)}
+.rule-list{margin-top:30px}
+.rule{border-top:1px solid var(--line);padding:18px 0;display:grid;grid-template-columns:24px 1fr;gap:12px}
+.rule span{font:11px var(--mono);color:var(--green);padding-top:2px}
+.rule h3{font-size:13px;margin-bottom:6px;font-weight:650}
+.rule p{font-size:12px}
+.code-shell{border:1px solid #34473d;background:#192c25;color:#d5e4d8;overflow:hidden}
+.codebar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 18px;border-bottom:1px solid #3a5042;font:10px var(--mono);color:#b4c7b9}
+.copy{border:1px solid #496450;background:transparent;color:#d1e4d4;padding:6px 10px;font:10px var(--mono);min-width:64px}
+.copy:hover{background:#2a4635}
+.tabs{display:flex;gap:0;border-bottom:1px solid #3a5042;padding:0 18px}
+.tabs button{background:transparent;color:#a8c0ae;border:0;border-bottom:2px solid transparent;padding:15px 15px 13px;font:11px var(--mono)}
+.tabs button[aria-selected="true"]{color:#d8f4dd;border-bottom-color:#bce8c7}
+.loop-preview{display:flex;align-items:center;gap:12px;padding:18px 22px;border-bottom:1px solid #3a5042;background:#20382b;font:10px var(--mono);color:#b4cfbc;flex-wrap:wrap}
+.loop-preview span{border:1px solid #66876f;padding:7px 10px;color:#e1eddf}
+.loop-preview small{margin-left:auto;font:9px var(--mono);color:#a4bfae}
+.code-scroll{height:430px;overflow:auto;scrollbar-color:#617f6a #192c25}
+pre{margin:0;padding:22px;font:11px/1.8 var(--mono);tab-size:2;white-space:pre}
+pre .key{color:#b5d3ff}
+pre .str{color:#c3e0bd}
+pre .num{color:#f5c18b}
+.code-note{font:10px/1.6 var(--mono);padding:13px 18px;border-top:1px solid #3a5042;color:#acc4b3}
+.code-note strong{color:#deeadf;font-weight:400}
+.config-foot{margin-top:16px;font:10px/1.7 var(--mono);color:var(--muted)}
+
+.protocol{display:grid;grid-template-columns:1fr 1fr;gap:54px}
+.protocol h2{margin:22px 0}
+.protocol>div>p{font-size:14px;color:var(--muted)}
+.handoff{margin-top:30px;padding:24px;border:1px solid var(--line);background:var(--white)}
+.handoff-head{font:10px var(--mono);color:var(--green);margin-bottom:20px}
+.handoff-line{display:flex;align-items:center;gap:12px;font:12px var(--mono)}
+.handoff-line i{height:1px;background:var(--line);flex:1;min-width:15px}
+.handoff p{font:11px/1.75 var(--mono);color:var(--muted);margin-top:17px}
+.tool-table{border-top:1px solid var(--ink)}
+.tool-row{display:grid;grid-template-columns:1.1fr 1fr;gap:15px;border-bottom:1px solid var(--line);padding:16px 0}
+.tool-row code{font:11px/1.6 var(--mono);color:var(--green)}
+.tool-row p{font-size:12px;color:var(--muted)}
+.protocol-note{margin-top:20px!important;font-size:11px!important}
+.signal{margin-top:18px;padding:14px 16px;border-left:2px solid var(--orange);background:#eaeae2;font:11px/1.7 var(--mono);color:var(--muted)}
+.signal strong{color:var(--ink)}
+
+.operations{background:#e9ece5}
+.ops-head{margin-bottom:36px}
+.terminal{background:#172925;color:#d9e8dc;border:1px solid #334e40}
+.terminal-head{display:flex;justify-content:space-between;padding:17px 23px;border-bottom:1px solid #3b5547;font:10px var(--mono);color:#adbfaf}
+.terminal-lines{padding:26px;display:grid;gap:24px}
+.command-row{display:grid;grid-template-columns:1.3fr 1fr;gap:20px;align-items:start}
+.command-row code{font:12px/1.6 var(--mono);overflow-wrap:anywhere}
+.command-row code b{color:#c5e3b9;font-weight:400}
+.command-row code:before{content:"$ ";color:#6b9f81}
+.command-row p{font:11px/1.65 var(--mono);color:#a9c0b0}
+.observability{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:29px}
+.observe{border-top:1px solid #b8c5b8;padding-top:20px}
+.observe h3{font-size:14px;font-weight:650;margin:12px 0}
+.observe p{font-size:12px;color:var(--muted)}
+.observe .mono{font-size:10px;color:var(--green)}
+
+.boundaries{display:grid;grid-template-columns:.85fr 1.15fr;gap:70px}
+.boundaries h2{margin:22px 0}
+.boundaries p{font-size:14px;color:var(--muted)}
+.status-row{display:grid;grid-template-columns:90px 1fr;gap:20px;border-top:1px solid var(--line);padding:19px 0}
+.status-row:last-child{border-bottom:1px solid var(--line)}
+.status-tag{font:9px var(--mono);padding:6px 7px;align-self:start;width:max-content;letter-spacing:.04em;background:#dce8dc;color:#345d43}
+.status-tag.future{background:#e9e4dc;color:#805b35}
+.status-row h3{font-size:13px;font-weight:650;margin:1px 0 7px}
+.status-row p{font-size:12px}
+.closing{padding:48px 0;display:flex;justify-content:space-between;align-items:center;gap:30px}
+.closing p{font-size:21px;letter-spacing:-.5px;max-width:600px;line-height:1.4}
+.closing a{font:11px var(--mono);border:1px solid var(--line);padding:14px 20px;white-space:nowrap}
+.closing a:hover{border-color:var(--green);color:var(--green)}
+footer{background:var(--ink);color:#bac6bd;padding:25px 0}
+.footer-inner{display:flex;align-items:center;justify-content:space-between;gap:24px}
+.footer-inner .brand{font-size:18px;color:#e5ece6}
+.footer-inner p{font:10px/1.6 var(--mono);text-align:right}
+.skip{position:absolute;left:12px;top:-60px;background:var(--white);padding:12px;z-index:100}
+.skip:focus{top:12px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+@media(min-width:1500px){.wrap{max-width:1440px}
+}
+@media(max-width:1050px){.wrap{padding:0 28px}
+.hero-top{gap:30px;grid-template-columns:1.2fr .8fr}
+h1{letter-spacing:-2.6px}
+.system-grid{grid-template-columns:1fr 240px}
+.map{padding:28px 20px}
+.flow-node{padding:16px 12px}
+.flow-node strong{font-size:14px}
+.connector{width:24px}
+.inspector{padding:25px 20px}
+.config-layout{gap:30px}
+.navlinks{gap:20px}
+.navend{display:none}
+.layers .layer{padding:24px}
+.layer p{min-height:110px}
+.boundaries{gap:40px}
+}
+
+@media(max-width:760px){.wrap{padding:0 20px}
+.nav{height:66px;gap:16px}
+.brand{font-size:21px}
+.navlinks{gap:17px;font-size:11px}
+.navlinks a:last-child{display:none}
+.hero{padding-top:38px}
+.hero-top{grid-template-columns:1fr;gap:24px;margin-top:24px}
+h1{font-size:49px;letter-spacing:-2.5px}
+.hero-copy p{max-width:570px;font-size:15px}
+.textlink{margin-top:18px}
+.hero-meta{flex-wrap:wrap;gap:12px 20px;line-height:1.6}
+.system-grid{grid-template-columns:1fr}
+.system-top{padding:16px;font-size:9px}
+.system-top span:last-child{display:none}
+.map{padding:22px 16px}
+.inspector{border-left:0;border-top:1px solid var(--darkline);padding:22px;display:grid;grid-template-columns:1fr 1fr;gap:0 24px}
+.inspector .label{grid-column:1/-1;margin-bottom:14px}
+.inspector h3{font-size:20px}
+.inspector p{grid-column:2;grid-row:2/5;margin:0;min-height:0;font-size:12px}
+.inspect-tags{margin-top:15px;gap:5px}
+.inspect-tags span{font-size:8px;padding:5px}
+.inspector-bottom{font-size:8px;padding-top:14px}
+.system-foot{flex-wrap:wrap;gap:10px 20px;padding:14px 18px;font-size:9px}
+.flow-node strong{font-size:13px}
+.flow-node small{font-size:9px}
+.flow-node .node-type{font-size:8px;margin-bottom:9px}
+.intro{grid-template-columns:1fr;gap:20px;padding:36px 0 40px}
+.intro h2{max-width:none;font-size:22px}
+.intro p{font-size:14px}
+section{padding:50px 0}
+.section-heading{display:block;margin:20px 0 28px}
+.section-heading p{margin-top:20px;max-width:none}
+.layers{grid-template-columns:1fr}
+.layer{border-right:0;border-bottom:1px solid var(--line);padding:25px!important}
+.layer p{min-height:0!important}
+.layer-head{margin-bottom:20px}
+.layer ul{display:flex;flex-wrap:wrap;gap:2px 22px}
+.interface{flex-direction:column;align-items:start;gap:10px;font-size:10px;padding:16px 22px}
+.config-layout,.protocol,.boundaries{grid-template-columns:1fr;gap:30px}
+.code-scroll{height:420px}
+.protocol h2,.boundaries h2,.config-copy h2{font-size:34px}
+.command-row{grid-template-columns:1fr;gap:7px}
+.terminal-lines{padding:23px;gap:25px}
+.command-row code{font-size:11px}
+.observability{grid-template-columns:1fr;gap:22px}
+.observe h3{margin:9px 0}
+.closing{align-items:start;flex-direction:column;padding:35px 0}
+.closing p{font-size:20px}
+.footer-inner p{font-size:9px}
+.footer-inner{align-items:start}
+.status-row{grid-template-columns:78px 1fr;gap:14px}
+}
+
+@media(max-width:390px){h1{font-size:42px}
+.navlinks{gap:12px}
+.brand{font-size:19px}
+.map{padding:20px 12px}
+.flow-node{padding:13px 9px}
+.flow-node strong{font-size:12px}
+.connector{width:19px}
+.flow-node small{font-size:8px}
+.inspector{display:block}
+.inspector p{margin-top:12px}
+.inspector-bottom{margin-top:10px}
+.runtime-zone{padding:11px}
+.zone-label{font-size:8px}
+}
+
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}
+*{transition:none!important}
+}
+
+@media(max-width:600px){.navlinks a[href="#architecture"],.navlinks a[href="#operations"]{display:none}}
+
+/* Technical-document presentation. */
+h1{font-size:clamp(36px,4vw,54px);line-height:1.12;letter-spacing:-1.8px;font-weight:570}
+h2{font-size:clamp(26px,2.5vw,34px);line-height:1.2;letter-spacing:-.9px}
+.hero{padding-top:42px}.hero-top{grid-template-columns:1.05fr .95fr;gap:48px;margin:23px 0 30px;align-items:start}
+.hero-copy p{max-width:540px;font-size:15px}.hero-meta{margin-top:8px}.intro{padding-top:35px;padding-bottom:38px}
+section{padding-top:60px;padding-bottom:60px}.section-heading{align-items:start;margin-top:20px;margin-bottom:28px}
+.section-heading p{max-width:470px}.closing p{font-size:19px;letter-spacing:-.3px}.closing{padding:32px 0}
+.eval-hero{padding-top:32px}.eval-title{grid-template-columns:1fr 1fr;align-items:start;gap:44px}.eval-title h1{font-size:clamp(34px,3.7vw,50px);letter-spacing:-1.5px;line-height:1.14}
+.eval-title p{font-size:14px}.breadcrumb{margin-bottom:28px}.eval-section{padding-top:48px;padding-bottom:48px}
+@media(max-width:760px){h1{font-size:36px;letter-spacing:-1.2px}.hero-top,.eval-title{grid-template-columns:1fr;gap:22px}.hero{padding-top:30px}.hero-copy p{font-size:14px}.eval-title h1{font-size:36px;letter-spacing:-1.2px}.config-copy h2,.protocol h2,.boundaries h2{font-size:29px}.section-heading p{max-width:none}.eval-section,section{padding-top:40px;padding-bottom:40px}.intro{gap:16px}.closing p{font-size:18px}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header><div class="wrap nav"><a class="brand" href="#" aria-label="Pragma home"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>Pragma</a><nav class="navlinks" aria-label="Main navigation"><a href="#architecture">Architecture</a><a href="#configuration">Configuration</a><a href="#operations">Operations</a><a href="evaluation.html">Evaluation</a><a href="#boundaries">Boundaries</a></nav><div class="navend">AGENT WORKFLOW CONTROL PLANE<span>GO · MCP · SELF-HOSTED</span></div></div></header>
+<main id="main">
+<div class="wrap hero">
+<div class="eyebrow">Technical overview / prototype</div>
+<div class="hero-top"><h1>Agent workflow<br>control plane</h1><div class="hero-copy"><p>Pragma is a Go control plane for configured agent workflows. It coordinates agent packages, outcome routing, bounded loops, and human decisions, and exposes execution state through a CLI and terminal monitor.</p><a class="textlink" href="#architecture">Architecture and interfaces <span aria-hidden="true">↓</span></a></div></div>
+<div class="hero-meta"><span>Declarative workflow</span><span>Bounded collaboration</span><span>Runner interfaces</span><span>Inspectable execution</span></div>
+<div class="system" aria-label="Interactive architecture diagram">
+<div class="system-top"><span><span class="dot"></span>SYSTEM MAP / SELECT A COMPONENT</span><span>CONFIGURATION → EXECUTION → EVIDENCE</span></div>
+<div class="system-grid"><div class="map">
+<div class="flow-row"><button class="flow-node" data-component="definition" aria-pressed="false"><span class="node-type">01 / Definition</span><strong>factory.json</strong><small>packages · steps · routes</small></button><span class="connector" aria-hidden="true">→</span><button class="flow-node" data-component="control" aria-pressed="true"><span class="node-type">02 / Control plane</span><strong>Pragma service</strong><small>state · commands · policy</small></button></div>
+<div class="flow-bridge" aria-hidden="true"></div>
+<div class="runtime-zone"><div class="zone-label"><span>03 / Execution boundary</span><span>Go interfaces</span></div><div class="flow-row"><button class="flow-node" data-component="engine" aria-pressed="false"><span class="node-type">Scheduling</span><strong>Workflow engine</strong><small>durable routes + waits</small></button><span class="connector" aria-hidden="true">→</span><button class="flow-node" data-component="runner" aria-pressed="false"><span class="node-type">Package invocation</span><strong>Agent runner</strong><small>sessions + MCP threads</small></button></div><div class="return-path">accepted results + execution activity</div></div>
+<div class="map-caption">CLI / terminal monitor / external operator agent → same service</div>
+</div><aside class="inspector" aria-live="polite"><div class="label">COMPONENT / <span id="inspect-number">02</span></div><h3 id="inspect-title">Control plane</h3><p id="inspect-description">Accepts operator commands, validates results, and records execution state. PostgreSQL exposes a queryable view of steps, sessions, decisions, and activity.</p><div class="inspect-tags" id="inspect-tags"><span>Go</span><span>PostgreSQL</span><span>Unix socket</span></div><div class="inspector-bottom" id="inspect-note">One local service.<br>Many execution contexts.</div></aside></div>
+<div class="system-foot"><span>INTERFACES</span><span>execution.Engine</span><span>execution.Runner</span><span>MCP thread protocol</span></div>
+</div>
+<div class="intro"><h2>Scope and terminology</h2><p>A <strong>workflow</strong> defines steps and outcome routes. An <strong>execution</strong> is one run for a project and input. A <strong>step</strong> invokes a package or waits for a decision. An optional <strong>stage</strong> groups agent steps and defines a bounded loop and human decision boundary. Multiple executions can progress independently within one local service.</p></div>
+</div>
+<div class="wrap"><section id="architecture"><div class="eyebrow">01 / System architecture</div><div class="section-heading"><h2>Component responsibilities and interfaces</h2><p>The control plane depends on execution.Engine. The scheduling adapter depends on execution.Runner for package invocation. The application composition root connects these implementations; controller and runner packages do not import Hatchet.</p></div>
+<div class="layers"><article class="layer"><div class="layer-head"><span>CONTROL PLANE</span><span>01</span></div><h3>Control plane</h3><p>Resolve the project configuration. Accept commands. Record attempts, pending decisions, results, and observable execution state.</p><ul><li>CLI + terminal monitor</li><li>Execution-scoped identity</li><li>PostgreSQL records</li></ul></article><article class="layer"><div class="layer-head"><span>WORKFLOW ENGINE</span><span>02</span></div><h3>Workflow engine adapter</h3><p>Progress through configured routes, persist waits, bound loop rounds, and coordinate concurrent members behind an engine interface.</p><ul><li>Hatchet adapter today</li><li>Sequential / concurrent loops</li><li>Human decision boundaries</li></ul></article><article class="layer"><div class="layer-head"><span>AGENT RUNTIME</span><span>03</span></div><h3>Package runner</h3><p>Invoke an entrypoint with assignment context. Capture output. Deliver messages. Accept a structured result through a scoped MCP connection.</p><ul><li>Package-runner interface</li><li>Supervised host sessions</li><li>Runner-specific adapters</li></ul></article></div><div class="interface"><span>DEPENDENCY BOUNDARIES</span><code>execution.Engine</code><span>control plane ↔ scheduler</span><code>execution.Runner</code><span>scheduler ↔ package runtime</span></div>
+</section></div>
+<div class="wrap"><section id="configuration" class="config-layout"><div class="config-copy"><div class="eyebrow">02 / Workflow definition</div><h2>Workflow configuration</h2><p>A project’s <code>factory.json</code> references agent packages and declares named steps, outcome routes, and stage policy. Packages own their runner configuration, tools, skills, and model integration.</p><div class="rule-list"><div class="rule"><span>01</span><div><h3>Outcome routing</h3><p>The agent submits an outcome. Its configured <code>on</code> map determines the next step. The controller does not infer success from prose.</p></div></div><div class="rule"><span>02</span><div><h3>Loop execution</h3><p>Sequential mode follows step routes. Concurrent mode starts all loop members together and reduces their results at a round barrier.</p></div></div><div class="rule"><span>03</span><div><h3>Human decision policy</h3><p>A stage can require a named human decision before leaving its loop. Reaching the loop limit escalates to that decision; without a required human decision, the execution fails.</p></div></div></div></div>
+<div><div class="code-shell"><div class="codebar"><span>factory.json / complete example</span><button class="copy" id="copy-config" type="button">Copy</button></div><div class="tabs" role="tablist" aria-label="Loop execution mode"><button role="tab" id="tab-sequential" aria-selected="true" aria-controls="configuration-code" data-mode="sequential">Sequential</button><button role="tab" id="tab-concurrent" aria-selected="false" aria-controls="configuration-code" data-mode="concurrent" tabindex="-1">Concurrent</button></div><div class="loop-preview" id="loop-preview" aria-label="Selected loop topology"><span>build</span> → <span>review</span> → <span>acceptance</span><small>↶ findings return to build</small></div><div class="code-scroll" tabindex="0" aria-label="Scrollable factory configuration"><pre id="configuration-code" role="tabpanel" aria-labelledby="tab-sequential"><code id="config-code">{
+  "name": "coding-review",
+  "agents": [
+    {
+      "name": "builder",
+      "path": "./agents/builder",
+      "entrypoint": "start.sh",
+      "args": [
+        "{prompt}"
+      ]
+    },
+    {
+      "name": "reviewer",
+      "path": "./agents/reviewer",
+      "entrypoint": "start.sh",
+      "args": [
+        "{prompt}"
+      ]
+    }
+  ],
+  "workflow": {
+    "start": "build",
+    "stages": [
+      {
+        "name": "implementation",
+        "loop": {
+          "mode": "sequential",
+          "limit": 3,
+          "steps": [
+            {
+              "name": "build",
+              "type": "agent",
+              "agent": "builder",
+              "instructions": "Implement the request and report changes and checks performed.",
+              "on": {
+                "ready_for_review": "review",
+                "failed": "$blocked"
+              }
+            },
+            {
+              "name": "review",
+              "type": "agent",
+              "agent": "reviewer",
+              "instructions": "Review against the request. Return changes_requested with findings or completed when ready for acceptance.",
+              "on": {
+                "changes_requested": "build",
+                "completed": "acceptance",
+                "failed": "$blocked"
+              }
+            }
+          ]
+        },
+        "human": {
+          "required": true,
+          "step": "acceptance"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "name": "acceptance",
+        "type": "decision",
+        "actor": "human",
+        "title": "Accept the implementation",
+        "on": {
+          "approve": "$done",
+          "request_changes": "build",
+          "reject": "$blocked"
+        }
+      }
+    ]
+  }
+}</code></pre></div><div class="code-note" id="mode-note"><strong>SEQUENTIAL</strong> / Build → review → revise or accept. Up to 3 rounds.</div></div><p class="config-foot">Illustrative package paths. Supply trusted, installed agent entrypoints and their provider credentials. Entrypoints must implement Pragma’s MCP result contract.</p></div>
+</section></div>
+<div class="wrap"><section id="communication" class="protocol"><div><div class="eyebrow">03 / Communication contract</div><h2>Messaging and result acceptance</h2><p>Active agents communicate through execution-scoped MCP threads. Progress, publications, questions, and results share a message envelope using A2A content parts. A runner adapter connects that protocol to the agent’s native interface.</p><div class="handoff"><div class="handoff-head">STEP RESULT / ACCEPTANCE CONDITIONS</div><div class="handoff-line"><span>agent</span><i aria-hidden="true"></i><span>send_message</span><i aria-hidden="true"></i><span>controller</span></div><p>payload.kind = step_result<br>outcome = configured route key<br>receipt.effect.state = accepted</p></div><div class="signal"><strong>Completion condition</strong><br>A step completes after the controller accepts its structured step_result. Process exit, an idle turn, and message delivery do not satisfy this condition.</div></div><div><div class="tool-table"><div class="tool-row"><code>create_thread<br>close_thread</code><p>Establish conversation context and its lifetime.</p></div><div class="tool-row"><code>add_participant<br>remove_participants<br>list_participants</code><p>Manage the identities participating in a thread.</p></div><div class="tool-row"><code>send_message</code><p>Address a participant or broadcast to the thread. Typed payloads carry progress, questions, publications, and results.</p></div><div class="tool-row"><code>read_messages<br>wait_for_message</code><p>Read conversation history or wait for new messages. Push-enabled adapters can resume an idle agent without model-driven polling.</p></div></div><p class="protocol-note">Each concurrent member submits its own result. The round advances only after all required results are accepted; peer messages alone cannot advance the workflow.</p><p class="protocol-note">Runner integration requires an adapter. The bundled Pi adapter translates native events and steering input. Other runners must implement the same communication and result contract.</p></div>
+</section></div>
+<section id="operations" class="operations"><div class="wrap"><div class="eyebrow">04 / Operational interface</div><div class="section-heading ops-head"><h2>CLI and terminal monitor</h2><p>The CLI exposes execution creation, inspection, messaging, decisions, retry, and cancellation. The monitor uses the same service operations. An external agent can invoke the CLI with the operator skill. Examples use the current <code>factory</code> binary and <code>factory.json</code> format.</p></div><div class="terminal"><div class="terminal-head"><span>PRAGMA / CLI OPERATIONS</span><span>COMMAND INTERFACE</span></div><div class="terminal-lines"><div class="command-row"><code>factory exec <b>"Implement the proposal"</b> -f rfc.md</code><p>Create a unique execution with pinned input documents and a configuration snapshot.</p></div><div class="command-row"><code>factory ls<br>factory <b>EXECUTION-ID</b></code><p>List contexts and runs, then inspect stages, steps, attempts, errors, and required actions.</p></div><div class="command-row"><code>factory <b>EXECUTION-ID</b> stream -f<br>factory <b>SESSION-ID</b> logs -f</code><p>Follow ordered workflow activity or a specific agent’s captured output.</p></div><div class="command-row"><code>factory <b>SESSION-ID</b> send <b>"Inspect the failing check"</b><br>factory <b>SESSION-ID</b> attach</code><p>Steer a running agent or attach to an input-capable session. Delivery is distinct from the agent acting on it.</p></div><div class="command-row"><code>factory inbox<br>factory answer <b>REQUEST-ID</b> approve --reason <b>"Reviewed"</b></code><p>Inspect pending decisions and record a deliberate answer. Review feedback can route back into another bounded series.</p></div><div class="command-row"><code>factory retry <b>STEP-ID</b> --reason <b>"Provider recovered"</b><br>factory monitor</code><p>Retry an inactive attempt, or open the interactive execution, message, and log views.</p></div></div></div><div class="observability"><article class="observe"><span class="mono">01 / STRUCTURE</span><h3>Workflow topology</h3><p>Stage frames, step cards, configured routes, concurrent members, and elapsed time. Execution context stays visible.</p></article><article class="observe"><span class="mono">02 / COMMUNICATION</span><h3>Messages and operator input</h3><p>Operator requests, agent inboxes, observed traffic, and direct steering. Inspect each running session independently.</p></article><article class="observe"><span class="mono">03 / EVIDENCE</span><h3>Retained activity</h3><p>Readable tool and result entries alongside raw runner output. Inspect history without treating model narration as control state.</p></article></div></div></section>
+<div class="wrap"><section id="boundaries" class="boundaries"><div><div class="eyebrow">05 / Engineering status</div><h2>Implementation status and limitations</h2><p>The current implementation targets a trusted, single-user host. It runs a local control service, PostgreSQL, a self-hosted Hatchet engine, and supervised agent processes.</p><p style="margin-top:20px">The engine and runner interfaces provide replacement points. Distributed deployment, authenticated decision authority, and enforceable workload isolation remain incomplete.</p></div><div><div class="status-row"><span class="status-tag">AVAILABLE</span><div><h3>Local end-to-end execution</h3><p>Configured agents, routes, bounded loops, concurrent sessions, human decisions, CLI operations, and terminal monitoring.</p></div></div><div class="status-row"><span class="status-tag">AVAILABLE</span><div><h3>Persistent operational records</h3><p>PostgreSQL execution, session, decision, and event records. Hatchet owns durable scheduling behind the engine interface.</p></div></div><div class="status-row"><span class="status-tag future">BOUNDARY</span><div><h3>Host processes are not sandboxes</h3><p>The local runner inherits the user’s permissions. Enforced filesystem, network, and secret isolation requires a future isolated runner.</p></div></div><div class="status-row"><span class="status-tag future">FUTURE</span><div><h3>Distributed operational guarantees</h3><p>Multi-worker leases and session routing, authenticated authority, crash reconciliation, and engine/projection atomicity remain work to complete.</p></div></div></div></section><div class="closing"><p>Evaluation report: GO-001<br><span style="font-size:14px;color:var(--muted);letter-spacing:0">Execution timing, token accounting, review findings, and limitations.</span></p><a href="evaluation.html">Read the evaluation report →</a></div></div>
+</main>
+<footer><div class="wrap footer-inner"><a class="brand" href="#">Pragma<span style="color:#91ab9a;font:10px var(--mono);letter-spacing:0">/ control plane</span></a><p>ARCHITECTURE AND EXECUTION MODEL<br>Prototype implementation</p></div></footer>
+<script>
+const components={
+ definition:{number:'01',title:'Workflow definition',description:'A complete project-local factory.json declares agent package entrypoints, named steps, explicit outcome routes, bounded stage loops, and human decisions.',tags:['JSON','Versionable','Project-local'],note:'One definition. Many executions.\nNo dependency on a particular model.'},
+ control:{number:'02',title:'Control plane',description:'Accepts operator commands, validates results, and records execution state. PostgreSQL exposes a queryable view of steps, sessions, decisions, and activity.',tags:['Go','PostgreSQL','Unix socket'],note:'One local service.\nMany execution contexts.'},
+ engine:{number:'03A',title:'Workflow engine',description:'The Hatchet adapter handles durable routes, waits, and round coordination through execution.Engine. Scheduling stays behind a Go interface rather than leaking into the CLI.',tags:['Engine interface','Durable waits','Self-hosted'],note:'Current implementation: Hatchet.\nNo Hatchet Cloud requirement.'},
+ runner:{number:'03B',title:'Agent runtime',description:'The execution.Runner interface invokes a package through a supervised session. A runtime adapter connects native agent input, output, and events to scoped MCP communication.',tags:['Runner interface','PTY output','MCP threads'],note:'Current implementation: host processes.\nTrusted packages; not a security sandbox.'}
+};
+document.querySelectorAll('[data-component]').forEach(button=>button.addEventListener('click',()=>{
+ document.querySelectorAll('[data-component]').forEach(node=>node.setAttribute('aria-pressed',String(node===button)));
+ const data=components[button.dataset.component];
+ document.getElementById('inspect-number').textContent=data.number;document.getElementById('inspect-title').textContent=data.title;document.getElementById('inspect-description').textContent=data.description;
+ document.getElementById('inspect-tags').replaceChildren(...data.tags.map(tag=>{const span=document.createElement('span');span.textContent=tag;return span}));
+ const note=document.getElementById('inspect-note');note.textContent=data.note;note.style.whiteSpace='pre-line';
+}));
+function configuration(mode){
+ const concurrent=mode==='concurrent';
+ return {name:'coding-review',agents:[{name:'builder',path:'./agents/builder',entrypoint:'start.sh',args:['{prompt}']},{name:'reviewer',path:'./agents/reviewer',entrypoint:'start.sh',args:['{prompt}']}],workflow:{start:'build',stages:[{name:'implementation',loop:{mode,limit:3,steps:[{name:'build',type:'agent',agent:'builder',instructions:concurrent?'Implement the request. Collaborate with the reviewer through the shared thread. Return ready after resolving findings.':'Implement the request and report changes and checks performed.',on:concurrent?{ready:'acceptance',revise:'build',failed:'$blocked'}:{ready_for_review:'review',failed:'$blocked'}},{name:'review',type:'agent',agent:'reviewer',instructions:concurrent?'Review the implementation through the shared thread. Return ready when findings are resolved, or revise for another round.':'Review against the request. Return changes_requested with findings or completed when ready for acceptance.',on:concurrent?{ready:'acceptance',revise:'build',failed:'$blocked'}:{changes_requested:'build',completed:'acceptance',failed:'$blocked'}}]},human:{required:true,step:'acceptance'}}],steps:[{name:'acceptance',type:'decision',actor:'human',title:'Accept the implementation',on:{approve:'$done',request_changes:'build',reject:'$blocked'}}]}};
+}
+let currentMode='sequential';
+function showConfiguration(mode){
+ currentMode=mode;
+ const topology=document.getElementById('loop-preview');
+ topology.innerHTML=mode==='sequential'?'<span>build</span> → <span>review</span> → <span>acceptance</span><small>↶ findings return to build</small>':'<span>build ↔ review</span> → <span>round barrier</span> → <span>acceptance</span><small>all results required</small>';
+ const raw=JSON.stringify(configuration(mode),null,2);const target=document.getElementById('config-code');
+ const escaped=raw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+ target.innerHTML=escaped.replace(/("(?:\\.|[^"\\])*"\s*:)|("(?:\\.|[^"\\])*")|\b(\d+|true|false|null)\b/g,(match,key,str,num)=>'<span class="'+(key?'key':str?'str':'num')+'">'+match+'</span>');
+ document.getElementById('configuration-code').setAttribute('aria-labelledby','tab-'+mode);
+ document.querySelectorAll('[data-mode]').forEach(button=>{const active=button.dataset.mode===mode;button.setAttribute('aria-selected',String(active));button.tabIndex=active?0:-1});
+ const note=document.getElementById('mode-note');note.replaceChildren();const strong=document.createElement('strong');strong.textContent=mode.toUpperCase();note.append(strong,mode==='sequential'?' / Build → review → revise or accept. Up to 3 rounds.':' / Both agents start together. All results are required; a repeat route starts another round.');
+ document.getElementById('copy-config').textContent='Copy';
+}
+document.querySelectorAll('[data-mode]').forEach(button=>{
+ button.addEventListener('click',()=>showConfiguration(button.dataset.mode));
+ button.addEventListener('keydown',event=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(event.key)){event.preventDefault();const mode=event.key==='Home'?'sequential':event.key==='End'?'concurrent':currentMode==='sequential'?'concurrent':'sequential';showConfiguration(mode);document.getElementById('tab-'+mode).focus()}});
+});
+document.getElementById('copy-config').addEventListener('click',async event=>{
+ const button=event.currentTarget;
+ try{await navigator.clipboard.writeText(JSON.stringify(configuration(currentMode),null,2)+'\n');button.textContent='Copied'}catch{button.textContent='Select code';const selection=window.getSelection();const range=document.createRange();range.selectNodeContents(document.getElementById('config-code'));selection.removeAllRanges();selection.addRange(range)}
+});
+showConfiguration('sequential');
+</script>
+</body>
+</html>

@@ -1,0 +1,281 @@
+{
+  "schema_version": 1,
+  "case": "GO-001",
+  "title": "Idempotent task creation",
+  "run": "GO-001-20261029-082749-concurrent",
+  "execution_id": "b231d267-bfe4-4536-a5fa-918f8c8456c0",
+  "context_id": "EXFRKGRN",
+  "created_at": "2026-10-29T13:28:27.172458Z",
+  "completed_at": "2026-10-29T13:42:33.892303Z",
+  "wall_seconds": 846.719845,
+  "verification": {
+    "workflow": "completed",
+    "product": "reviewer-reported passing checks",
+    "operator_product_tests": false,
+    "operator_oracle_checks": false,
+    "isolation_enforced": false,
+    "observed_oracle_tool_paths": []
+  },
+  "metrics": {
+    "usage_by_step": {
+      "build": {
+        "reported_tokens": {
+          "input": 127962,
+          "output": 20272,
+          "cacheRead": 585043,
+          "cacheWrite": 0,
+          "totalTokens": 733277,
+          "reasoning": 9961
+        },
+        "assistant_responses": 21,
+        "stop_reasons": {
+          "toolUse": 20,
+          "stop": 1
+        },
+        "settled_turns": 1,
+        "tool_errors": 0,
+        "recovery_notices": [],
+        "cost": "unknown; provider counters are zero"
+      },
+      "specification": {
+        "reported_tokens": {
+          "input": 181697,
+          "output": 15592,
+          "cacheRead": 507392,
+          "cacheWrite": 0,
+          "totalTokens": 704681,
+          "reasoning": 2814
+        },
+        "assistant_responses": 24,
+        "stop_reasons": {
+          "toolUse": 22,
+          "stop": 2
+        },
+        "settled_turns": 2,
+        "tool_errors": 1,
+        "recovery_notices": [],
+        "cost": "unknown; provider counters are zero"
+      },
+      "architecture_review": {
+        "reported_tokens": {
+          "input": 46901,
+          "output": 19564,
+          "cacheRead": 668160,
+          "cacheWrite": 0,
+          "totalTokens": 734625,
+          "reasoning": 12861
+        },
+        "assistant_responses": 22,
+        "stop_reasons": {
+          "toolUse": 20,
+          "stop": 2
+        },
+        "settled_turns": 2,
+        "tool_errors": 4,
+        "recovery_notices": [],
+        "cost": "unknown; provider counters are zero"
+      },
+      "code_review": {
+        "reported_tokens": {
+          "input": 42705,
+          "output": 13426,
+          "cacheRead": 513792,
+          "cacheWrite": 0,
+          "totalTokens": 569923,
+          "reasoning": 7949
+        },
+        "assistant_responses": 16,
+        "stop_reasons": {
+          "toolUse": 15,
+          "stop": 1
+        },
+        "settled_turns": 1,
+        "tool_errors": 1,
+        "recovery_notices": [],
+        "cost": "unknown; provider counters are zero"
+      }
+    },
+    "total_reported_tokens": {
+      "input": 399265,
+      "output": 68854,
+      "cacheRead": 2274387,
+      "cacheWrite": 0,
+      "totalTokens": 2742506,
+      "reasoning": 33585
+    },
+    "reasoning_note": "Reasoning is provider-reported diagnostic data; do not add it again to totalTokens. Cached tokens are repeated context processed, not unique content.",
+    "message_kinds": {
+      "step_result": 4,
+      "message": 4,
+      "publication": 3
+    },
+    "message_count": 11,
+    "code_diff": {
+      "taskapi.go": {
+        "before_lines": 65,
+        "after_lines": 119,
+        "added": 59,
+        "removed": 5
+      },
+      "taskapi_test.go": {
+        "before_lines": 30,
+        "after_lines": 351,
+        "added": 321,
+        "removed": 0
+      }
+    },
+    "observed_oracle_tool_paths": [],
+    "outcome": "completed",
+    "error": null,
+    "document_sizes": {
+      "spec": {
+        "file_bytes": 18323,
+        "body_html_bytes": 12407,
+        "body_words": 1080
+      },
+      "plan": {
+        "file_bytes": 17350,
+        "body_html_bytes": 11435,
+        "body_words": 1027
+      }
+    },
+    "stage_elapsed_seconds": {
+      "design": 368.612419,
+      "implementation": 278.604076
+    },
+    "decisions": [
+      {
+        "step": "design_approval: review spec.html, plan.html",
+        "answer": "approve",
+        "at": "2026-10-29T13:35:33.558482Z"
+      },
+      {
+        "step": "acceptance",
+        "answer": "approve",
+        "at": "2026-10-29T13:42:33.873397Z"
+      }
+    ]
+  },
+  "profiles": {
+    "architect": {
+      "provider": "openrouter",
+      "model": "deepseek/deepseek-v4-flash",
+      "thinking": "high"
+    },
+    "architecture_reviewer": {
+      "provider": "openrouter",
+      "model": "deepseek/deepseek-v4-flash",
+      "thinking": "high"
+    },
+    "coder_golang": {
+      "provider": "openrouter",
+      "model": "deepseek/deepseek-v4-flash",
+      "thinking": "medium"
+    },
+    "code_reviewer_golang": {
+      "provider": "openrouter",
+      "model": "deepseek/deepseek-v4-flash",
+      "thinking": "high"
+    }
+  },
+  "steps": [
+    {
+      "key": "specification",
+      "state": "completed",
+      "outcome": "completed",
+      "visit": 1,
+      "try": 1,
+      "started_at": "2026-10-29T13:28:27.205605Z",
+      "finished_at": "2026-10-29T13:34:35.816838Z"
+    },
+    {
+      "key": "architecture_review",
+      "state": "completed",
+      "outcome": "completed",
+      "visit": 1,
+      "try": 1,
+      "started_at": "2026-10-29T13:28:27.20904Z",
+      "finished_at": "2026-10-29T13:34:35.818024Z"
+    },
+    {
+      "key": "design_approval",
+      "state": "completed",
+      "outcome": "approve",
+      "visit": 1,
+      "try": 1,
+      "started_at": "2026-10-29T13:34:35.819196Z",
+      "finished_at": "2026-10-29T13:35:33.582481Z"
+    },
+    {
+      "key": "build",
+      "state": "completed",
+      "outcome": "completed",
+      "visit": 1,
+      "try": 1,
+      "started_at": "2026-10-29T13:35:33.583758Z",
+      "finished_at": "2026-10-29T13:40:12.186285Z"
+    },
+    {
+      "key": "code_review",
+      "state": "completed",
+      "outcome": "completed",
+      "visit": 1,
+      "try": 1,
+      "started_at": "2026-10-29T13:35:33.584705Z",
+      "finished_at": "2026-10-29T13:40:12.187834Z"
+    },
+    {
+      "key": "acceptance",
+      "state": "completed",
+      "outcome": "approve",
+      "visit": 1,
+      "try": 1,
+      "started_at": "2026-10-29T13:40:12.188862Z",
+      "finished_at": "2026-10-29T13:42:33.89116Z"
+    }
+  ],
+  "human_waits": [
+    {
+      "step": "design_approval",
+      "created_at": "2026-10-29T13:34:35.820626Z",
+      "answered_at": "2026-10-29T13:35:33.558482Z",
+      "wait_seconds": 57.737856,
+      "answer": "approve"
+    },
+    {
+      "step": "acceptance",
+      "created_at": "2026-10-29T13:40:12.190076Z",
+      "answered_at": "2026-10-29T13:42:33.873397Z",
+      "wait_seconds": 141.683321,
+      "answer": "approve"
+    }
+  ],
+  "provenance": {
+    "source_files": [
+      "metrics.json",
+      "run.json",
+      "assessment.md",
+      "evidence/execution-final.json",
+      "project/reviews/architecture.md",
+      "project/reviews/code.md"
+    ],
+    "binary_sha256": "87693816a9a688ae855e090faf540f5891d9785f5fbf7821988726e40c356337",
+    "registry_revision": "0f70faf8ecf0c8a5462407faeef417d63ede31f3",
+    "source_configuration_sha256": "32183de15a35d6c76687c8e49c41844410d638449ba083eb34cddeded60f45c8",
+    "resolved_configuration_digest": "0b1ee0872a92891326275f61db63fb97c936d781bf0cff649cb69e45f96a59fb"
+  },
+  "comparison": {
+    "run": "GO-001-20261028-162533-concurrent",
+    "tokens": {
+      "input": 1246285,
+      "output": 134403,
+      "cacheRead": 3628189,
+      "cacheWrite": 0,
+      "totalTokens": 5008877,
+      "reasoning": 76390
+    },
+    "tool_errors": 27,
+    "outcome": "failed",
+    "qualification": "Same case and models; changed runtime, skills, and instructions. One sample per configuration. Previous execution failed at final acceptance; token counts have different completion boundaries."
+  }
+}
