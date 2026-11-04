@@ -2,7 +2,7 @@
 
 A technical overview of Pragma's control plane, workflow definition, agent runtime, and operational interfaces.
 
-`docs/index.html` and `docs/evaluation.html` are self-contained: HTML, CSS, JavaScript, and diagrams. No build, package installation, external fonts, or API connection is required. The home page links to the evaluation page; both use relative links for GitHub Pages repository subpaths. Configuration examples and the architecture inspector are interactive; the page does not connect to a running Pragma service.
+`docs/index.html` and `docs/evaluation.html` use static HTML, embedded CSS/JavaScript, and a local SVG diagram. No build, package installation, external fonts, or API connection is required. The home page links to the evaluation page; both use relative links for GitHub Pages repository subpaths. The architecture page uses `docs/runtime-adapters.svg`; keep that asset with the HTML. Configuration examples and the architecture inspector are interactive; the page does not connect to a running Pragma service.
 
 ## Preview
 
@@ -54,3 +54,7 @@ Source: `../evals/factory-go/runs/GO-001-20261029-082749-concurrent/`. The embed
 ## Editorial style
 
 Use the home page as an architecture reference and the evaluation page as a technical report. Prefer descriptive section titles, concrete interface and state semantics, measurements with defined denominators, source attribution, and explicit implementation limits. Avoid slogans, unsupported benefit claims, and promotional comparison language.
+
+## Runtime architecture diagram
+
+`docs/runtime-adapters.svg` is the published copy of `../controls/docs/images/runtime-adapters.svg`. Update it from that canonical source when runtime ownership changes. The current architecture page describes explicit adapter selection, Pi 1.0.3 compatibility, private preparation, supervised sessions and MCP completion. Provider/model overrides and lifecycle-routing limitations are identified explicitly. The dated evaluation page and evidence describe their original run, not current runtime support.

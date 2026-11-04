@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1190" viewBox="0 0 1440 1190" role="img" aria-labelledby="title description">
+<title id="title">Pragma native runtime preparation and session ownership</title>
+<desc id="description">A factory pins package defaults and a native runtime requirement. The command runner selects an adapter and checks capabilities. The adapter prepares native configuration and verifies compatibility. The session supervisor launches the package entrypoint. That entrypoint selects the source workspace and role skills; the native bridge configures scoped MCP and delivers messages. The worker submits an accepted result through MCP. Native runtime identity is distinct from command hosting. Host processes are not sandboxes.</desc>
+<defs><pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".65" fill="#dce6df"/></pattern><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#5f8271" stroke-width="1.5"/></marker></defs>
+<style>text{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;fill:#203a2e}.label{font-size:14px;font-weight:600;letter-spacing:1.5px;fill:#44775b}.title{font-size:24px;font-weight:600}.body{font-size:17px;fill:#536c5e}.mono{font-family:ui-monospace,monospace;font-size:15px;fill:#536c5e}.line{fill:none;stroke:#5f8271;stroke-width:2;marker-end:url(#arrow)}</style>
+<rect width="1440" height="1190" fill="#f7faf8"/><rect width="1440" height="1190" fill="url(#grid)"/>
+<text x="48" y="42" class="label">PRAGMA / IMPLEMENTED RUNTIME BOUNDARY</text><text x="48" y="84" font-size="34" font-weight="600">Native configuration without workflow coupling</text>
+
+<rect x="48" y="126" width="640" height="158" rx="14" fill="#fff" stroke="#cadbd0"/><text x="72" y="155" class="label">01 / DEFINITION</text><text x="72" y="189" class="title">Pin the package and native requirement</text>
+<text x="72" y="221" class="body">factory.json: package, entrypoint, args, runtime name/version.</text>
+<text x="72" y="245" class="body">Package defaults and compatibility requirement are pinned.</text>
+<rect x="752" y="126" width="640" height="158" rx="14" fill="#edf5f0" stroke="#cadbd0"/><text x="776" y="155" class="label">PACKAGE / REGISTRY</text><text x="776" y="189" class="title">Native defaults and role assets</text>
+<text x="776" y="221" class="body">Instructions, linked skills, tools, MCPs and native defaults.</text>
+<text x="776" y="245" class="body">A new role reuses an adapter; it does not implement one.</text>
+<rect x="48" y="354" width="640" height="158" rx="14" fill="#fff" stroke="#cadbd0"/><text x="72" y="383" class="label">02 / COMMAND RUNNER</text><text x="72" y="417" class="title">Select an explicitly registered adapter</text>
+<text x="72" y="449" class="body">Prepare private prompt/input/config files and scoped identity.</text>
+<text x="72" y="473" class="body">Check peer/idle-delivery capabilities before concurrent launch.</text>
+<rect x="752" y="354" width="640" height="158" rx="14" fill="#edf5f0" stroke="#cadbd0"/><text x="776" y="383" class="label">03 / NATIVE PREPARER</text><text x="776" y="417" class="title">Validate and prepare native launch settings</text>
+<text x="776" y="449" class="body">Pi: resolve executable, check version, copy private profile.</text>
+<text x="776" y="473" class="body">Return command, process environment and safe runtime identity.</text>
+<rect x="48" y="582" width="640" height="158" rx="14" fill="#fff" stroke="#cadbd0"/><text x="72" y="611" class="label">04 / HOST SUPERVISOR</text><text x="72" y="645" class="title">Launch and supervise a command</text>
+<text x="72" y="677" class="body">Persist runner: command plus separate native runtime metadata.</text>
+<text x="72" y="701" class="body">Capture output; stop and wait on cancellation or accepted result.</text>
+<rect x="752" y="582" width="640" height="158" rx="14" fill="#edf5f0" stroke="#cadbd0"/><text x="776" y="611" class="label">05 / ENTRYPOINT + NATIVE BRIDGE</text><text x="776" y="645" class="title">Entrypoint and native integration</text>
+<text x="776" y="677" class="body">Entrypoint owns source workspace and package/role setup.</text>
+<text x="776" y="701" class="body">Optional bridge: MCP setup and native session input.</text>
+<rect x="48" y="810" width="640" height="158" rx="14" fill="#fff" stroke="#cadbd0"/><text x="72" y="839" class="label">SCOPED MCP / DURABLE PROTOCOL</text><text x="72" y="873" class="title">Messages, results and explicit acceptance</text>
+<text x="72" y="905" class="body">Peer/operator messages use assigned conversation identities.</text>
+<text x="72" y="929" class="body">step_result requires effect.state: accepted; prose is insufficient.</text>
+<rect x="752" y="810" width="640" height="158" rx="14" fill="#edf5f0" stroke="#cadbd0"/><text x="776" y="839" class="label">06 / NATIVE WORKER</text><text x="776" y="873" class="title">Perform work and communicate</text>
+<text x="776" y="905" class="body">Configured agent or deterministic program executes its assignment.</text>
+<text x="776" y="929" class="body">Idle turn, process exit and accepted completion are distinct.</text>
+<path d="M368 284 V354" class="line"/>
+<text x="390" y="326" class="mono">pinned invocation</text>
+<path d="M1072 284 V354" class="line"/>
+<text x="1094" y="326" class="mono">read native defaults</text>
+<path d="M688 433 H752" class="line"/>
+<text x="710" y="420" class="mono"></text>
+<path d="M1072 512 V547 H368 V582" class="line"/>
+<text x="520" y="539" class="mono">prepared launch + safe metadata</text>
+<path d="M688 661 H752" class="line"/>
+<text x="710" y="648" class="mono"></text>
+<path d="M1072 740 V810" class="line"/>
+<text x="1090" y="782" class="mono">native API / SDK</text>
+<path d="M752 889 H688" class="line" marker-start="url(#arrow)"/>
+<text x="704" y="876" class="mono"></text>
+<path d="M368 810 V740" class="line"/>
+<text x="390" y="782" class="mono">accepted receipt</text>
+<rect x="48" y="1014" width="1344" height="132" rx="14" fill="#eaf1ed" stroke="#cadbd0"/>
+<text x="72" y="1045" class="label">BOUNDARIES AND CURRENT LIMITS</text>
+<text x="72" y="1076" class="body">execution.Runner owns invocation; adapters.Adapter owns native preparation; the supervisor owns process lifecycle.</text>
+<text x="72" y="1102" class="body">Pi 1.0.3 supported. Provider/model overrides remain CTRL-005. Lifecycle routing defect remains CTRL-001.</text>
+<text x="72" y="1128" class="body">Private profiles and capability declarations are not sandboxing. Source workspace and execution files are distinct.</text>
+<text x="48" y="1174" class="mono">SOURCE: docs/runtime-adapters.md · adapters/adapter.go · internal/commandrunner · adapters/pi</text></svg>
