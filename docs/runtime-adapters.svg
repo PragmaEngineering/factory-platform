@@ -49,6 +49,6 @@
 <rect x="48" y="1014" width="1344" height="132" rx="14" fill="#eaf1ed" stroke="#cadbd0"/>
 <text x="72" y="1045" class="label">BOUNDARIES AND CURRENT LIMITS</text>
 <text x="72" y="1076" class="body">execution.Runner owns invocation; adapters.Adapter owns native preparation; the supervisor owns process lifecycle.</text>
-<text x="72" y="1102" class="body">Pi 1.0.3 supported. Provider/model overrides remain CTRL-005. Lifecycle routing defect remains CTRL-001.</text>
+<text x="72" y="1102" class="body">Pi 1.0.3 supported. Provider/model overrides remain CTRL-005. Lifecycle audience enforced; status never wakes peers.</text>
 <text x="72" y="1128" class="body">Private profiles and capability declarations are not sandboxing. Source workspace and execution files are distinct.</text>
 <text x="48" y="1174" class="mono">SOURCE: docs/runtime-adapters.md · adapters/adapter.go · internal/commandrunner · adapters/pi</text></svg>
