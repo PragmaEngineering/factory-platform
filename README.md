@@ -32,7 +32,7 @@ See [GitHub’s publishing-source instructions](https://docs.github.com/en/pages
 
 Keep technical claims aligned with the implementation in `../controls/`, especially:
 
-- `docs/factory-json.md`: accepted configuration and concurrent loop rules.
+- `docs/factory-yaml.md`: accepted configuration and concurrent loop rules.
 - `docs/session-supervisor.md`: session delivery and recovery limits.
 - `docs/execution-contract.md`: implemented behavior versus design targets.
 - `comms.md`: thread tools, result acceptance, and messaging semantics.

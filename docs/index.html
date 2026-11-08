@@ -302,7 +302,7 @@ section{padding-top:60px;padding-bottom:60px}.section-heading{align-items:start;
 <div class="system" aria-label="Interactive architecture diagram">
 <div class="system-top"><span><span class="dot"></span>SYSTEM MAP / SELECT A COMPONENT</span><span>CONFIGURATION → EXECUTION → EVIDENCE</span></div>
 <div class="system-grid"><div class="map">
-<div class="flow-row"><button class="flow-node" data-component="definition" aria-pressed="false"><span class="node-type">01 / Definition</span><strong>factory.json</strong><small>packages · steps · routes</small></button><span class="connector" aria-hidden="true">→</span><button class="flow-node" data-component="control" aria-pressed="true"><span class="node-type">02 / Control plane</span><strong>Pragma service</strong><small>state · commands · policy</small></button></div>
+<div class="flow-row"><button class="flow-node" data-component="definition" aria-pressed="false"><span class="node-type">01 / Definition</span><strong>factory.yaml</strong><small>packages · steps · routes</small></button><span class="connector" aria-hidden="true">→</span><button class="flow-node" data-component="control" aria-pressed="true"><span class="node-type">02 / Control plane</span><strong>Pragma service</strong><small>state · commands · policy</small></button></div>
 <div class="flow-bridge" aria-hidden="true"></div>
 <div class="runtime-zone"><div class="zone-label"><span>03 / Execution boundary</span><span>Go interfaces</span></div><div class="flow-row"><button class="flow-node" data-component="engine" aria-pressed="false"><span class="node-type">Scheduling</span><strong>Workflow engine</strong><small>durable routes + waits</small></button><span class="connector" aria-hidden="true">→</span><button class="flow-node" data-component="runner" aria-pressed="false"><span class="node-type">Package invocation</span><strong>Package invocation</strong><small>native preparation + supervised sessions</small></button></div><div class="return-path">accepted results + execution activity</div></div>
 <div class="map-caption">CLI / web monitor / external operator agent → same service</div>
@@ -316,100 +316,73 @@ section{padding-top:60px;padding-bottom:60px}.section-heading{align-items:start;
 <figure class="runtime-diagram"><a href="runtime-adapters.svg" aria-label="Open runtime preparation diagram"><img src="runtime-adapters.svg" alt="Native runtime preparation, supervised command launch, role entrypoint, native session bridge, and scoped MCP completion" width="1440" height="1190" loading="lazy"></a><figcaption>Native runtime ownership. Open the diagram for full resolution. The scheduler does not interpret native agent configuration.</figcaption></figure>
 <div class="runtime-note"><h3>Current native support</h3><p>Pi 1.0.3 is the supported interactive integration. A non-Pi Go fixture verifies managed preparation, scoped MCP completion, peer messages, failure and cancellation without a provider. Opaque command packages advertise no agent capabilities. Concurrent collaboration requires peer delivery and idle-session support.</p><p>Per-package Pi provider/model/endpoint/credential overrides resolve into private native profiles. Offline preflight checks native configuration; the launched session is verified before assignment. Native defaults stay in agent bundles. Lifecycle reports are controller-only and filtered from native model input; a profile or capability declaration is not sandboxing.</p></div>
 </section></div>
-<div class="wrap"><section id="configuration" class="config-layout"><div class="config-copy"><div class="eyebrow">02 / Workflow definition</div><h2>Workflow configuration</h2><p>A project’s <code>factory.json</code> references agent packages and declares named steps, outcome routes, and stage policy. Packages own their native defaults, tools, skills, and model integration. An explicit runtime selects the adapter and compatibility requirement; the command host remains a separate execution mechanism.</p><p>Example package paths must point to installed agent bundles with native defaults and linked skills. Provider credentials must be available to the execution service. The example does not install agents or configure a provider.</p><div class="rule-list"><div class="rule"><span>01</span><div><h3>Outcome routing</h3><p>The agent submits an outcome. Its configured <code>on</code> map determines the next step. The controller does not infer success from prose.</p></div></div><div class="rule"><span>02</span><div><h3>Loop execution</h3><p>Sequential mode follows step routes. Concurrent mode starts all loop members together and reduces their results at a round barrier.</p></div></div><div class="rule"><span>03</span><div><h3>Human decision policy</h3><p>A stage can require a named human decision before leaving its loop. Reaching the loop limit escalates to that decision; without a required human decision, the execution fails.</p></div></div></div></div>
-<div><div class="code-shell"><div class="codebar"><span>factory.json / complete example</span><button class="copy" id="copy-config" type="button">Copy</button></div><div class="tabs" role="tablist" aria-label="Loop execution mode"><button role="tab" id="tab-sequential" aria-selected="true" aria-controls="configuration-code" data-mode="sequential">Sequential</button><button role="tab" id="tab-concurrent" aria-selected="false" aria-controls="configuration-code" data-mode="concurrent" tabindex="-1">Concurrent</button></div><div class="loop-preview" id="loop-preview" aria-label="Selected loop topology"><span>build</span> → <span>review</span> → <span>acceptance</span><small>↶ findings return to build</small></div><div class="code-scroll" tabindex="0" aria-label="Scrollable factory configuration"><pre id="configuration-code" role="tabpanel" aria-labelledby="tab-sequential"><code id="config-code">{
-  &quot;name&quot;: &quot;coding-review&quot;,
-  &quot;packages&quot;: [
-    {
-      &quot;name&quot;: &quot;builder&quot;,
-      &quot;path&quot;: &quot;./agents/builder&quot;,
-      &quot;entrypoint&quot;: &quot;start.sh&quot;,
-      &quot;runtime&quot;: {
-        &quot;name&quot;: &quot;pi&quot;,
-        &quot;version&quot;: &quot;=1.0.3&quot;
-      },
-      &quot;args&quot;: [
-        &quot;-p&quot;,
-        &quot;{prompt}&quot;
-      ]
-    },
-    {
-      &quot;name&quot;: &quot;reviewer&quot;,
-      &quot;path&quot;: &quot;./agents/reviewer&quot;,
-      &quot;entrypoint&quot;: &quot;start.sh&quot;,
-      &quot;runtime&quot;: {
-        &quot;name&quot;: &quot;pi&quot;,
-        &quot;version&quot;: &quot;=1.0.3&quot;
-      },
-      &quot;args&quot;: [
-        &quot;-p&quot;,
-        &quot;{prompt}&quot;
-      ]
-    }
-  ],
-  &quot;workflow&quot;: {
-    &quot;start&quot;: &quot;build&quot;,
-    &quot;stages&quot;: [
-      {
-        &quot;name&quot;: &quot;implementation&quot;,
-        &quot;loop&quot;: {
-          &quot;mode&quot;: &quot;sequential&quot;,
-          &quot;limit&quot;: 3,
-          &quot;steps&quot;: [
-            {
-              &quot;name&quot;: &quot;build&quot;,
-              &quot;type&quot;: &quot;run&quot;,
-              &quot;package&quot;: &quot;builder&quot;,
-              &quot;instructions&quot;: &quot;Implement the request and report changes and checks performed.&quot;,
-              &quot;on&quot;: {
-                &quot;ready_for_review&quot;: &quot;review&quot;,
-                &quot;failed&quot;: &quot;$blocked&quot;
-              }
-            },
-            {
-              &quot;name&quot;: &quot;review&quot;,
-              &quot;type&quot;: &quot;run&quot;,
-              &quot;package&quot;: &quot;reviewer&quot;,
-              &quot;instructions&quot;: &quot;Review against the request. Return changes_requested with findings or completed when ready for acceptance.&quot;,
-              &quot;on&quot;: {
-                &quot;changes_requested&quot;: &quot;build&quot;,
-                &quot;completed&quot;: &quot;acceptance&quot;,
-                &quot;failed&quot;: &quot;$blocked&quot;
-              }
-            }
-          ]
-        },
-        &quot;human&quot;: {
-          &quot;required&quot;: true,
-          &quot;step&quot;: &quot;acceptance&quot;
-        }
-      }
-    ],
-    &quot;steps&quot;: [
-      {
-        &quot;name&quot;: &quot;acceptance&quot;,
-        &quot;type&quot;: &quot;decision&quot;,
-        &quot;actor&quot;: &quot;human&quot;,
-        &quot;title&quot;: &quot;Accept the implementation&quot;,
-        &quot;on&quot;: {
-          &quot;approve&quot;: &quot;$done&quot;,
-          &quot;request_changes&quot;: &quot;build&quot;,
-          &quot;reject&quot;: &quot;$blocked&quot;
-        }
-      }
-    ]
-  }
-}</code></pre></div><div class="code-note" id="mode-note"><strong>SEQUENTIAL</strong> / Build → review → revise or accept. Up to 3 rounds.</div></div><p class="config-foot">Illustrative package paths. Supply trusted, installed agent entrypoints and their provider credentials. Entrypoints must implement Pragma’s MCP result contract.</p></div>
+<div class="wrap"><section id="configuration" class="config-layout"><div class="config-copy"><div class="eyebrow">02 / Workflow definition</div><h2>Workflow configuration</h2><p>A project’s <code>factory.yaml</code> references agent packages and declares named steps, outcome routes, and stage policy. Packages own their native defaults, tools, skills, and model integration. An explicit runtime selects the adapter and compatibility requirement; the command host remains a separate execution mechanism.</p><p>Example package paths must point to installed agent bundles with native defaults and linked skills. Provider credentials must be available to the execution service. The example does not install agents or configure a provider.</p><div class="rule-list"><div class="rule"><span>01</span><div><h3>Outcome routing</h3><p>The agent submits an outcome. Its configured <code>on</code> map determines the next step. The controller does not infer success from prose.</p></div></div><div class="rule"><span>02</span><div><h3>Loop execution</h3><p>Sequential mode follows step routes. Concurrent mode starts all loop members together and reduces their results at a round barrier.</p></div></div><div class="rule"><span>03</span><div><h3>Human decision policy</h3><p>A stage can require a named human decision before leaving its loop. Reaching the loop limit escalates to that decision; without a required human decision, the execution fails.</p></div></div></div></div>
+<div><div class="code-shell"><div class="codebar"><span>factory.yaml / complete example</span><button class="copy" id="copy-config" type="button">Copy</button></div><div class="tabs" role="tablist" aria-label="Loop execution mode"><button role="tab" id="tab-sequential" aria-selected="true" aria-controls="configuration-code" data-mode="sequential">Sequential</button><button role="tab" id="tab-concurrent" aria-selected="false" aria-controls="configuration-code" data-mode="concurrent" tabindex="-1">Concurrent</button></div><div class="loop-preview" id="loop-preview" aria-label="Selected loop topology"><span>build</span> → <span>review</span> → <span>acceptance</span><small>↶ findings return to build</small></div><div class="code-scroll" tabindex="0" aria-label="Scrollable factory configuration"><pre id="configuration-code" role="tabpanel" aria-labelledby="tab-sequential"><code id="config-code">name: coding-review
+packages:
+  - name: builder
+    path: ./agents/builder
+    entrypoint: start.sh
+    runtime:
+      name: pi
+      version: =1.0.3
+    args:
+      - -p
+      - &#x27;{prompt}&#x27;
+  - name: reviewer
+    path: ./agents/reviewer
+    entrypoint: start.sh
+    runtime:
+      name: pi
+      version: =1.0.3
+    args:
+      - -p
+      - &#x27;{prompt}&#x27;
+workflow:
+  start: build
+  stages:
+    - name: implementation
+      loop:
+        mode: sequential
+        limit: 3
+        steps:
+          - name: build
+            type: run
+            package: builder
+            instructions: Implement the request and report changes and checks performed.
+            on:
+              ready_for_review: review
+              failed: $blocked
+          - name: review
+            type: run
+            package: reviewer
+            instructions: Review against the request. Return changes_requested with findings or completed when ready for acceptance.
+            on:
+              changes_requested: build
+              completed: acceptance
+              failed: $blocked
+      human:
+        required: true
+        step: acceptance
+  steps:
+    - name: acceptance
+      type: decision
+      actor: human
+      title: Accept the implementation
+      on:
+        approve: $done
+        request_changes: build
+        reject: $blocked
+</code></pre></div><div class="code-note" id="mode-note"><strong>SEQUENTIAL</strong> / Build → review → revise or accept. Up to 3 rounds.</div></div><p class="config-foot">Illustrative package paths. Supply trusted, installed agent entrypoints and their provider credentials. Entrypoints must implement Pragma’s MCP result contract.</p></div>
 </section></div>
 <div class="wrap"><section id="communication" class="protocol"><div><div class="eyebrow">03 / Communication contract</div><h2>Messaging and result acceptance</h2><p>Active agents communicate through execution-scoped MCP threads. Progress, publications, questions, and results share a message envelope using A2A content parts. A runner adapter connects that protocol to the agent’s native interface.</p><div class="handoff"><div class="handoff-head">STEP RESULT / ACCEPTANCE CONDITIONS</div><div class="handoff-line"><span>agent</span><i aria-hidden="true"></i><span>send_message</span><i aria-hidden="true"></i><span>controller</span></div><p>payload.kind = step_result<br>outcome = configured route key<br>receipt.effect.state = accepted</p></div><div class="signal"><strong>Completion condition</strong><br>A step completes after the controller accepts its structured step_result. Process exit, an idle turn, and message delivery do not satisfy this condition.</div></div><div><div class="tool-table"><div class="tool-row"><code>create_thread<br>close_thread</code><p>Establish conversation context and its lifetime.</p></div><div class="tool-row"><code>add_participant<br>remove_participants<br>list_participants</code><p>Manage the identities participating in a thread.</p></div><div class="tool-row"><code>send_message</code><p>Address a participant or broadcast to the thread. Typed payloads carry progress, questions, publications, and results.</p></div><div class="tool-row"><code>read_messages<br>wait_for_message</code><p>Read conversation history or wait for new messages. Push-enabled adapters can resume an idle agent without model-driven polling.</p></div></div><p class="protocol-note">Each concurrent member submits its own result. The round advances only after all required results are accepted; peer messages alone cannot advance the workflow.</p><p class="protocol-note">Runner integration requires an adapter. The bundled Pi adapter translates native events and steering input. Other runners must implement the same communication and result contract.</p></div>
 </section></div>
-<section id="operations" class="operations"><div class="wrap"><div class="eyebrow">04 / Operational interface</div><div class="section-heading ops-head"><h2>CLI and separate web monitor</h2><p>The CLI exposes execution creation, inspection, messaging, decisions, retry, and cancellation. The monitor uses the same service operations. An external agent can invoke the CLI with the operator skill. Examples use the current <code>factory</code> binary and <code>factory.json</code> format.</p></div><div class="terminal"><div class="terminal-head"><span>PRAGMA / CLI OPERATIONS</span><span>COMMAND INTERFACE</span></div><div class="terminal-lines"><div class="command-row"><code>factory exec <b>"Implement the proposal"</b> -f rfc.md</code><p>Create a unique execution with pinned input documents and a configuration snapshot.</p></div><div class="command-row"><code>factory ls<br>factory <b>EXECUTION-ID</b></code><p>List contexts and runs, then inspect stages, steps, attempts, errors, and required actions.</p></div><div class="command-row"><code>factory <b>EXECUTION-ID</b> stream -f<br>factory <b>SESSION-ID</b> logs -f</code><p>Follow ordered workflow activity or a specific agent’s captured output.</p></div><div class="command-row"><code>factory <b>SESSION-ID</b> send <b>"Inspect the failing check"</b><br>factory <b>SESSION-ID</b> attach</code><p>Steer a running agent or attach to an input-capable session. Delivery is distinct from the agent acting on it.</p></div><div class="command-row"><code>factory inbox<br>factory answer <b>REQUEST-ID</b> approve --reason <b>"Reviewed"</b></code><p>Inspect pending decisions and record a deliberate answer. Review feedback can route back into another bounded series.</p></div><div class="command-row"><code>factory retry <b>STEP-ID</b> --reason <b>"Provider recovered"</b><br>factory monitor start -d</code><p>Retry an inactive attempt. The separately installed web monitor presents workflow graphs, messages and decisions. Raw logs remain in the CLI; the web monitor omits a logs view.</p></div></div></div><div class="observability"><article class="observe"><span class="mono">01 / STRUCTURE</span><h3>Workflow topology</h3><p>Stage frames, step cards, configured routes, concurrent members, and elapsed time. Execution context stays visible.</p></article><article class="observe"><span class="mono">02 / COMMUNICATION</span><h3>Messages and operator input</h3><p>Operator requests, agent inboxes, observed traffic, and direct steering. Inspect each running session independently.</p></article><article class="observe"><span class="mono">03 / EVIDENCE</span><h3>Retained activity</h3><p>The CLI retains raw runner output and the ordered execution stream. The web monitor presents workflow and communication state; model narration is not control state.</p></article></div></div></section>
+<section id="operations" class="operations"><div class="wrap"><div class="eyebrow">04 / Operational interface</div><div class="section-heading ops-head"><h2>CLI and separate web monitor</h2><p>The CLI exposes execution creation, inspection, messaging, decisions, retry, and cancellation. The monitor uses the same service operations. An external agent can invoke the CLI with the operator skill. Examples use the current <code>factory</code> binary and <code>factory.yaml</code> format.</p></div><div class="terminal"><div class="terminal-head"><span>PRAGMA / CLI OPERATIONS</span><span>COMMAND INTERFACE</span></div><div class="terminal-lines"><div class="command-row"><code>factory exec <b>"Implement the proposal"</b> -f rfc.md</code><p>Create a unique execution with pinned input documents and a configuration snapshot.</p></div><div class="command-row"><code>factory ls<br>factory <b>EXECUTION-ID</b></code><p>List contexts and runs, then inspect stages, steps, attempts, errors, and required actions.</p></div><div class="command-row"><code>factory <b>EXECUTION-ID</b> stream -f<br>factory <b>SESSION-ID</b> logs -f</code><p>Follow ordered workflow activity or a specific agent’s captured output.</p></div><div class="command-row"><code>factory <b>SESSION-ID</b> send <b>"Inspect the failing check"</b><br>factory <b>SESSION-ID</b> attach</code><p>Steer a running agent or attach to an input-capable session. Delivery is distinct from the agent acting on it.</p></div><div class="command-row"><code>factory inbox<br>factory answer <b>REQUEST-ID</b> approve --reason <b>"Reviewed"</b></code><p>Inspect pending decisions and record a deliberate answer. Review feedback can route back into another bounded series.</p></div><div class="command-row"><code>factory retry <b>STEP-ID</b> --reason <b>"Provider recovered"</b><br>factory monitor start -d</code><p>Retry an inactive attempt. The separately installed web monitor presents workflow graphs, messages and decisions. Raw logs remain in the CLI; the web monitor omits a logs view.</p></div></div></div><div class="observability"><article class="observe"><span class="mono">01 / STRUCTURE</span><h3>Workflow topology</h3><p>Stage frames, step cards, configured routes, concurrent members, and elapsed time. Execution context stays visible.</p></article><article class="observe"><span class="mono">02 / COMMUNICATION</span><h3>Messages and operator input</h3><p>Operator requests, agent inboxes, observed traffic, and direct steering. Inspect each running session independently.</p></article><article class="observe"><span class="mono">03 / EVIDENCE</span><h3>Retained activity</h3><p>The CLI retains raw runner output and the ordered execution stream. The web monitor presents workflow and communication state; model narration is not control state.</p></article></div></div></section>
 <div class="wrap"><section id="boundaries" class="boundaries"><div><div class="eyebrow">05 / Engineering status</div><h2>Implementation status and limitations</h2><p>The current implementation targets a trusted, single-user host. It runs a local control service, PostgreSQL, a self-hosted Hatchet engine, and supervised agent processes.</p><p style="margin-top:20px">The engine and runner interfaces provide replacement points. Distributed deployment, authenticated decision authority, and enforceable workload isolation remain incomplete.</p></div><div><div class="status-row"><span class="status-tag">AVAILABLE</span><div><h3>Local end-to-end execution</h3><p>Configured agents, routes, bounded loops, concurrent sessions, human decisions, CLI operations, and web monitoring.</p></div></div><div class="status-row"><span class="status-tag">AVAILABLE</span><div><h3>Persistent operational records</h3><p>PostgreSQL execution, session, decision, and event records. Hatchet owns durable scheduling behind the engine interface.</p></div></div><div class="status-row"><span class="status-tag future">BOUNDARY</span><div><h3>Host processes are not sandboxes</h3><p>The local runner inherits the user’s permissions. Enforced filesystem, network, and secret isolation requires a future isolated runner.</p></div></div><div class="status-row"><span class="status-tag future">FUTURE</span><div><h3>Distributed operational guarantees</h3><p>Multi-worker leases and session routing, authenticated authority, crash reconciliation, and engine/projection atomicity remain work to complete.</p></div></div></div></section><div class="closing"><p>Evaluation report: GO-001<br><span style="font-size:14px;color:var(--muted);letter-spacing:0">Execution timing, token accounting, review findings, and limitations.</span></p><a href="evaluation.html">Read the evaluation report →</a></div></div>
 </main>
 <footer><div class="wrap footer-inner"><a class="brand" href="#">Pragma<span style="color:#91ab9a;font:10px var(--mono);letter-spacing:0">/ control plane</span></a><p>ARCHITECTURE AND EXECUTION MODEL<br>Prototype implementation</p></div></footer>
 <script>
 const components={
- definition:{number:'01',title:'Workflow definition',description:'A complete project-local factory.json declares agent package entrypoints, named steps, explicit outcome routes, bounded stage loops, and human decisions.',tags:['JSON','Versionable','Project-local'],note:'One definition. Many executions.\nNo dependency on a particular model.'},
+ definition:{number:'01',title:'Workflow definition',description:'A complete project-local factory.yaml declares agent package entrypoints, named steps, explicit outcome routes, bounded stage loops, and human decisions.',tags:['YAML','Versionable','Project-local'],note:'One definition. Many executions.\nNo dependency on a particular model.'},
  control:{number:'02',title:'Control plane',description:'Accepts operator commands, validates results, and records execution state. PostgreSQL exposes a queryable view of steps, sessions, decisions, and activity.',tags:['Go','PostgreSQL','Unix socket'],note:'One local service.\nMany execution contexts.'},
  engine:{number:'03A',title:'Workflow engine',description:'The Hatchet adapter handles durable routes, waits, and round coordination through execution.Engine. Scheduling stays behind a Go interface rather than leaking into the CLI.',tags:['Engine interface','Durable waits','Self-hosted'],note:'Current implementation: Hatchet.\nNo Hatchet Cloud requirement.'},
  runner:{number:'03B',title:'Package invocation and native adapters',description:'execution.Runner supervises one package invocation. adapters.Adapter validates native compatibility and prepares private launch settings. The native bridge translates session input and scoped MCP delivery.',tags:['Native identity','Capability checks','Supervised command'],note:'Pi 1.0.3 supported; per-package overrides.\nHost processes are not sandboxed.'}
@@ -421,24 +394,130 @@ document.querySelectorAll('[data-component]').forEach(button=>button.addEventLis
  document.getElementById('inspect-tags').replaceChildren(...data.tags.map(tag=>{const span=document.createElement('span');span.textContent=tag;return span}));
  const note=document.getElementById('inspect-note');note.textContent=data.note;note.style.whiteSpace='pre-line';
 }));
-function configuration(mode){
- const result={"name":"coding-review","packages":[{"name":"builder","path":"./agents/builder","entrypoint":"start.sh","runtime":{"name":"pi","version":"=1.0.3"},"args":["-p","{prompt}"]},{"name":"reviewer","path":"./agents/reviewer","entrypoint":"start.sh","runtime":{"name":"pi","version":"=1.0.3"},"args":["-p","{prompt}"]}],"workflow":{"start":"build","stages":[{"name":"implementation","loop":{"mode":"sequential","limit":3,"steps":[{"name":"build","type":"run","package":"builder","instructions":"Implement the request and report changes and checks performed.","on":{"ready_for_review":"review","failed":"$blocked"}},{"name":"review","type":"run","package":"reviewer","instructions":"Review against the request. Return changes_requested with findings or completed when ready for acceptance.","on":{"changes_requested":"build","completed":"acceptance","failed":"$blocked"}}]},"human":{"required":true,"step":"acceptance"}}],"steps":[{"name":"acceptance","type":"decision","actor":"human","title":"Accept the implementation","on":{"approve":"$done","request_changes":"build","reject":"$blocked"}}]}};
- const loop=result.workflow.stages[0].loop; loop.mode=mode;
- if(mode==='concurrent') {
-  loop.steps[0].instructions='Implement the request. Collaborate through the shared thread; return ready when findings are resolved, or revise for another round.';
-  loop.steps[1].instructions='Review through the shared thread; return ready when findings are resolved, or revise for another round.';
-  for(const step of loop.steps) step.on={ready:'acceptance',revise:'build',failed:'$blocked'};
- }
- return result;
-}
+const configurationExamples = {
+ sequential: `name: coding-review
+packages:
+  - name: builder
+    path: ./agents/builder
+    entrypoint: start.sh
+    runtime:
+      name: pi
+      version: =1.0.3
+    args:
+      - -p
+      - '{prompt}'
+  - name: reviewer
+    path: ./agents/reviewer
+    entrypoint: start.sh
+    runtime:
+      name: pi
+      version: =1.0.3
+    args:
+      - -p
+      - '{prompt}'
+workflow:
+  start: build
+  stages:
+    - name: implementation
+      loop:
+        mode: sequential
+        limit: 3
+        steps:
+          - name: build
+            type: run
+            package: builder
+            instructions: Implement the request and report changes and checks performed.
+            on:
+              ready_for_review: review
+              failed: $blocked
+          - name: review
+            type: run
+            package: reviewer
+            instructions: Review against the request. Return changes_requested with findings or completed when ready for acceptance.
+            on:
+              changes_requested: build
+              completed: acceptance
+              failed: $blocked
+      human:
+        required: true
+        step: acceptance
+  steps:
+    - name: acceptance
+      type: decision
+      actor: human
+      title: Accept the implementation
+      on:
+        approve: $done
+        request_changes: build
+        reject: $blocked
+`,
+ concurrent: `name: coding-review
+packages:
+  - name: builder
+    path: ./agents/builder
+    entrypoint: start.sh
+    runtime:
+      name: pi
+      version: =1.0.3
+    args:
+      - -p
+      - '{prompt}'
+  - name: reviewer
+    path: ./agents/reviewer
+    entrypoint: start.sh
+    runtime:
+      name: pi
+      version: =1.0.3
+    args:
+      - -p
+      - '{prompt}'
+workflow:
+  start: build
+  stages:
+    - name: implementation
+      loop:
+        mode: concurrent
+        limit: 3
+        steps:
+          - name: build
+            type: run
+            package: builder
+            instructions: Implement the request. Collaborate through the shared thread; return ready when findings are resolved, or revise for another round.
+            on:
+              ready: acceptance
+              revise: build
+              failed: $blocked
+          - name: review
+            type: run
+            package: reviewer
+            instructions: Review through the shared thread; return ready when findings are resolved, or revise for another round.
+            on:
+              ready: acceptance
+              revise: build
+              failed: $blocked
+      human:
+        required: true
+        step: acceptance
+  steps:
+    - name: acceptance
+      type: decision
+      actor: human
+      title: Accept the implementation
+      on:
+        approve: $done
+        request_changes: build
+        reject: $blocked
+`
+};
+function configuration(mode){ return configurationExamples[mode]; }
 let currentMode='sequential';
 function showConfiguration(mode){
  currentMode=mode;
  const topology=document.getElementById('loop-preview');
  topology.innerHTML=mode==='sequential'?'<span>build</span> → <span>review</span> → <span>acceptance</span><small>↶ findings return to build</small>':'<span>build ↔ review</span> → <span>round barrier</span> → <span>acceptance</span><small>all results required</small>';
- const raw=JSON.stringify(configuration(mode),null,2);const target=document.getElementById('config-code');
+ const raw=configuration(mode);const target=document.getElementById('config-code');
  const escaped=raw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
- target.innerHTML=escaped.replace(/("(?:\\.|[^"\\])*"\s*:)|("(?:\\.|[^"\\])*")|\b(\d+|true|false|null)\b/g,(match,key,str,num)=>'<span class="'+(key?'key':str?'str':'num')+'">'+match+'</span>');
+ target.innerHTML=escaped.replace(/^(\s*(?:-\s+)?)([a-z_]+)(:)/gm,'$1<span class="key">$2</span>$3');
  document.getElementById('configuration-code').setAttribute('aria-labelledby','tab-'+mode);
  document.querySelectorAll('[data-mode]').forEach(button=>{const active=button.dataset.mode===mode;button.setAttribute('aria-selected',String(active));button.tabIndex=active?0:-1});
  const note=document.getElementById('mode-note');note.replaceChildren();const strong=document.createElement('strong');strong.textContent=mode.toUpperCase();note.append(strong,mode==='sequential'?' / Build → review → revise or accept. Up to 3 rounds.':' / Both agents start together. All results are required; a repeat route starts another round.');
@@ -450,7 +529,7 @@ document.querySelectorAll('[data-mode]').forEach(button=>{
 });
 document.getElementById('copy-config').addEventListener('click',async event=>{
  const button=event.currentTarget;
- try{await navigator.clipboard.writeText(JSON.stringify(configuration(currentMode),null,2)+'\n');button.textContent='Copied'}catch{button.textContent='Select code';const selection=window.getSelection();const range=document.createRange();range.selectNodeContents(document.getElementById('config-code'));selection.removeAllRanges();selection.addRange(range)}
+ try{await navigator.clipboard.writeText(configuration(currentMode));button.textContent='Copied'}catch{button.textContent='Select code';const selection=window.getSelection();const range=document.createRange();range.selectNodeContents(document.getElementById('config-code'));selection.removeAllRanges();selection.addRange(range)}
 });
 showConfiguration('sequential');
 </script>

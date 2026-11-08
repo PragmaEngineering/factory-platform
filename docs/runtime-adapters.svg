@@ -7,7 +7,7 @@
 <text x="48" y="42" class="label">PRAGMA / IMPLEMENTED RUNTIME BOUNDARY</text><text x="48" y="84" font-size="34" font-weight="600">Native configuration without workflow coupling</text>
 
 <rect x="48" y="126" width="640" height="158" rx="14" fill="#fff" stroke="#cadbd0"/><text x="72" y="155" class="label">01 / DEFINITION</text><text x="72" y="189" class="title">Pin the package and native requirement</text>
-<text x="72" y="221" class="body">factory.json: package, entrypoint, args, runtime name/version.</text>
+<text x="72" y="221" class="body">factory.yaml: package, entrypoint, args, runtime name/version.</text>
 <text x="72" y="245" class="body">Package defaults and compatibility requirement are pinned.</text>
 <rect x="752" y="126" width="640" height="158" rx="14" fill="#edf5f0" stroke="#cadbd0"/><text x="776" y="155" class="label">PACKAGE / REGISTRY</text><text x="776" y="189" class="title">Native defaults and role assets</text>
 <text x="776" y="221" class="body">Instructions, linked skills, tools, MCPs and native defaults.</text>
