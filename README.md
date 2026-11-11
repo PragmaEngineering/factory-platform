@@ -1,8 +1,8 @@
 # Pragma platform site
 
-A technical overview of Pragma's control plane, workflow definition, agent runtime, and operational interfaces.
+Pragma’s engineering studio and consultancy website. The home page introduces Factory, Agent Messenger, Factory Platform, and Fabric, with consulting and studio sections.
 
-`docs/index.html` and `docs/evaluation.html` use static HTML, embedded CSS/JavaScript, and a local SVG diagram. No build, package installation, external fonts, or API connection is required. The home page links to the evaluation page; both use relative links for GitHub Pages repository subpaths. The architecture page uses `docs/runtime-adapters.svg`; keep that asset with the HTML. Configuration examples and the architecture inspector are interactive; the page does not connect to a running Pragma service.
+`docs/index.html` uses `docs/studio.css` and an inline SVG schematic. `docs/factory.html` preserves the detailed Factory architecture reference; `docs/evaluation.html` preserves the dated execution study. These pages use static HTML, CSS/JavaScript, and a local SVG diagram. No build, package installation, external fonts, or API connection is required. The home page links to the evaluation page; both use relative links for GitHub Pages repository subpaths. The Factory architecture page uses `docs/runtime-adapters.svg`; keep that asset with the HTML. Configuration examples and the architecture inspector are interactive; the page does not connect to a running Pragma service.
 
 ## Preview
 
@@ -53,7 +53,7 @@ Source: `../evals/factory-go/runs/GO-001-20261029-082749-concurrent/`. The embed
 
 ## Editorial style
 
-Use the home page as an architecture reference and the evaluation page as a technical report. Prefer descriptive section titles, concrete interface and state semantics, measurements with defined denominators, source attribution, and explicit implementation limits. Avoid slogans, unsupported benefit claims, and promotional comparison language.
+Use the home page to describe the studio, consulting practice, and project boundaries. Factory Platform is explicitly planned; Fabric is an early implementation. Use factory.html as an architecture reference and evaluation.html as a dated technical report. Prefer descriptive section titles, concrete interface and state semantics, measurements with defined denominators, source attribution, and explicit implementation limits. Avoid slogans, unsupported benefit claims, and promotional comparison language.
 
 ## Runtime architecture diagram
 
